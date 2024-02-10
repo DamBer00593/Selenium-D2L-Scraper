@@ -1,7 +1,7 @@
 # bot.py
 
 import discord
-
+import configFile
 
 client = discord.Client(intents=discord.Intents.default())
 
@@ -20,5 +20,4 @@ async def on_ready():
     print(message2.content)
     await message2.delete()
 
-client.run(
-    "MTAyNDA4MDA0OTUyMTA0NTUxNA.GEoW1K.HYTp_CsDwgRS9atw-VEVMVt7sBDL7gw5UcFiFc")
+client.run(configFile.DISCORDSECRET)

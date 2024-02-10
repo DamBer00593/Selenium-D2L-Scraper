@@ -16,6 +16,7 @@ DISCORDUSERID = [
 ]
 
 DISCORDWEBHOOK = ""
+DISCORDSECRET = ""
 
 
 def sendError(errorMessage):
