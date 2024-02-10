@@ -1,0 +1,30 @@
+import requests
+EMAIL = ""
+PASSWORD = ""
+TOTPSECRET = ""
+
+COURSES = [
+    "211298",  # ISDP
+    "211296",  # Technical Writing
+    "209760",  # Machatronics Fundamentals
+    "209867",  # Alternative Solutions
+    "209758"   # Linux Fundamentals
+]
+
+DISCORDUSERID = [
+
+]
+
+DISCORDWEBHOOK = ""
+
+
+def sendError(errorMessage):
+    pingString = ""
+    for userid in DISCORDUSERID:
+        pingString += "<@"+str(userid)+">"
+
+    new_data = {
+        "content": pingString+"\n"+errorMessage
+    }
+
+    requests.post(DISCORDWEBHOOK, json=new_data)
