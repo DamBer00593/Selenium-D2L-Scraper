@@ -1,31 +1,47 @@
 import requests
-EMAIL = ""
-PASSWORD = ""
-TOTPSECRET = ""
-
-COURSES = [
+# Selenium driver uses these fields
+EMAIL = ""  # NBCC Email Address
+PASSWORD = ""  # NBCC Password
+TOTPSECRET = ""  # NBCC mobile authentication secret
+COURSES = [  # An array of courses to loop through the assignments page
     "211298",  # ISDP
     "211296",  # Technical Writing
     "209760",  # Machatronics Fundamentals
     "209867",  # Alternative Solutions
     "209758"   # Linux Fundamentals
 ]
-
-DISCORDUSERID = [
-
-]
-
-DISCORDWEBHOOK = ""
+# The discord integration uses this code
+# Discord bot secret
 DISCORDSECRET = ""
+
+# Error reporting method ("discord" ,"slack" ,"none")
+# slack was not tested <3
+ERRORREPORTING = "discord"
+
+WEBHOOK = ""
+
+# if discord is selected, the users in the array will be pinged. add no users if you dont want people to be pinged
+DISCORDUSERID = [
+    
+]
 
 
 def sendError(errorMessage):
-    pingString = ""
-    for userid in DISCORDUSERID:
-        pingString += "<@"+str(userid)+">"
+    if (ERRORREPORTING.upper() == "discord".upper()):
+        pingString = ""
+        for userid in DISCORDUSERID:
+            pingString += "<@"+str(userid)+">"
 
-    new_data = {
-        "content": pingString+"\n"+errorMessage
-    }
+        new_data = {
+            "content": pingString+"\n"+errorMessage
+        }
 
-    requests.post(DISCORDWEBHOOK, json=new_data)
+        requests.post(WEBHOOK, json=new_data)
+    elif (ERRORREPORTING.upper() == "slack".upper()):
+        new_data = {
+            "text": errorMessage
+        }
+
+        requests.post(WEBHOOK, json=new_data)
+    elif (ERRORREPORTING.upper() == "none".upper()):
+        print(errorMessage)

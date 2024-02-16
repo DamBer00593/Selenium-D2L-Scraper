@@ -26,25 +26,22 @@ def convertMonthTxtToNum(monthText):
 
 def d2lTimeStampToUnix(d2lDateString):
     try:
-        if (d2lDateString == "Access restricted after availability ends."):
-            return None
+        split1 = d2lDateString.split(" ")
+        month = convertMonthTxtToNum(split1[2])
+        day = int(split1[3][:-1])
+        year = int(split1[4])
+        time12h = split1[5]
+        AM = (split1[6] == "AM")
+        time24h = time12h.split(":")
+        if (AM == False):
+            hour = int(time24h[0])+12
+            minute = int(time24h[1])
         else:
-            split1 = d2lDateString.split(" ")
-            month = convertMonthTxtToNum(split1[2])
-            day = int(split1[3][:-1])
-            year = int(split1[4])
-            time12h = split1[5]
-            AM = (split1[6] == "AM")
-            time24h = time12h.split(":")
-            if (AM == False):
-                hour = int(time24h[0])+12
-                minute = int(time24h[1])
-            else:
-                hour = int(time24h[0])
-                minute = int(time24h[0])
+            hour = int(time24h[0])
+            minute = int(time24h[0])
 
-            date_time = datetime.datetime(year, month, day, hour, minute)
-            return time.mktime(date_time.timetuple())
+        date_time = datetime.datetime(year, month, day, hour, minute)
+        return time.mktime(date_time.timetuple())
     except:
         configFile.sendError("Error with Date Conversion")
         return None
