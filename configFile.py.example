@@ -10,9 +10,6 @@ COURSES = [  # An array of courses to loop through the assignments page
     "209867",  # Alternative Solutions
     "209758"   # Linux Fundamentals
 ]
-# The discord integration uses this code
-# Discord bot secret
-DISCORDSECRET = ""
 
 # Error reporting method ("discord" ,"slack" ,"none")
 # slack was not tested <3
