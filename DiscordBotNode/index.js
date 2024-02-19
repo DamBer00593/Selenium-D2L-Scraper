@@ -3,9 +3,12 @@ const configJSON = JSON.parse(readFileSync("./config.json"));
 
 import DataA from "./DataAccessor.js"
 import DC from "./DiscordClass.js"
-import express from 'express'
+import express, { json } from "express"
+
 const app = express()
+app.use(express.json());
 const port = 3001
+
 let discord = new DC()
 app.all('*', (req, res, next) => {
     next()
@@ -25,7 +28,11 @@ app.get('/a', async (req, res) => {
 })
 
 app.post('/bulkAssignments', (req, res) => {
-    res.status(404)
+    let body = req.body.assignments
+    console.log(body.length)
+    for (let i = 0; i < body.length; i++) {
+        console.log(body[i])
+    }
 
 })
 
