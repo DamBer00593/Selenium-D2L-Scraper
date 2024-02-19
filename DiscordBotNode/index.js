@@ -4,7 +4,21 @@ const configJSON = JSON.parse(readFileSync("./config.json"));
 import DataA from "./DataAccessor.js"
 import DC from "./DiscordClass.js"
 import express, { json } from "express"
+import moment from 'moment'
+import fs from 'fs'
+let logStream = fs.createWriteStream('log.txt')
+let console = {}
+console.log = (obj) => {
+    var s = ''
+    if (typeof obj === 'string')
+        s = obj
+    else
+        s = JSON.stringify(obj)
 
+    var dS = '[' + moment().format() + '] '
+    s = `[${dS}] ${s}'\n'`
+    logStream.write(s)
+}
 const app = express()
 app.use(express.json());
 const port = 3001
@@ -20,6 +34,7 @@ app.get('/a', async (req, res) => {
         let message = "hi lol"
         discord.sendMessage(configJSON.channelID, message)
         res.status(200).send("")
+        console.log("/a")
     }
     catch (e) {
         console.log(e)
@@ -28,48 +43,68 @@ app.get('/a', async (req, res) => {
 })
 
 app.get('/courses', async (req, res) => {
+    try {
+        let resp = await DataA.getCourses()
+        res.status(200).json(JSON.parse(resp))
 
-    let resp = await DataA.getCourses()
-    res.status(200).json(JSON.parse(resp))
+    } catch (e) {
+        console.log(e)
+    }
 
 })
 
 
 app.get('/assignments/due', async (req, res) => {
-
-    let resp = await DataA.getAssignmentsDue()
-    res.status(200).json(JSON.parse(resp))
+    try {
+        let resp = await DataA.getAssignmentsDue()
+        res.status(200).json(JSON.parse(resp))
+    } catch (e) {
+        console.log(e)
+    }
 
 })
 
 app.get('/assignments', async (req, res) => {
-
-    let resp = await DataA.getAssignments()
-    res.status(200).json(JSON.parse(resp))
+    try {
+        let resp = await DataA.getAssignments()
+        res.status(200).json(JSON.parse(resp))
+    } catch (e) {
+        console.log(e)
+    }
 
 })
 
 
 
 app.post('/bulkAssignments', async (req, res) => {
-    let body = req.body.assignments
-    console.log(body.length)
-    for (let i = 0; i < body.length; i++) {
-        await DataA.addAssignment(body[i].assessmentName, body[i].courseCode, body[i].unixTimestamp)
+    try {
+        let body = req.body.assignments
+        console.log(body.length)
+        for (let i = 0; i < body.length; i++) {
+            await DataA.addAssignment(body[i].assessmentName, body[i].courseCode, body[i].unixTimestamp)
+        }
+        res.status(200).send(`Successfully added`)
+    } catch (e) {
+        console.log(e)
     }
-    res.status(200).send(`Successfully added`)
+
 })
 
 app.post('/bulkCourses', async (req, res) => {
-    let body = req.body.courses
-    console.log(body.length)
-    for (let i = 0; i < body.length; i++) {
-        console.log(body[i])
-        await DataA.addCourse(body[i].courseCode, body[i].courseName)
+    try {
+        let body = req.body.courses
+        console.log(body.length)
+        for (let i = 0; i < body.length; i++) {
+            console.log(body[i])
+            await DataA.addCourse(body[i].courseCode, body[i].courseName)
 
+        }
+        await editDiscordMessage()
+        res.status(200).send(`Successfully added`)
+    } catch (e) {
+        console.log(e)
     }
-    await editDiscordMessage()
-    res.status(200).send(`Successfully added`)
+
 })
 
 app.listen(port, () => {
