@@ -58,12 +58,12 @@ def convertElementToArray(element, courseCode):
                 if (l[1].encode_contents().decode("utf-8") == "Access restricted after availability ends."):
                     li = i.find_all('li')
                     stringystring = str(li[0]).split(">")[1][:-20]
-                    assignmentsArray.append([courseCode[0], l[0].encode_contents().decode(
-                        "utf-8"), d2lTimeStampToUnix(stringystring), courseCode[1]])
+                    assignmentsArray.append([courseCode, l[0].encode_contents().decode(
+                        "utf-8"), d2lTimeStampToUnix(stringystring)])
                 else:
 
-                    assignmentsArray.append([courseCode[0], l[0].encode_contents().decode(
-                        "utf-8"), d2lTimeStampToUnix(l[1].encode_contents().decode("utf-8")), courseCode[3]])
+                    assignmentsArray.append([courseCode, l[0].encode_contents().decode(
+                        "utf-8"), d2lTimeStampToUnix(l[1].encode_contents().decode("utf-8"))])
         return assignmentsArray
     except:
         configFile.sendError("Error parsing soup on course: " + courseCode)
@@ -102,12 +102,12 @@ try:
     for i in configFile.COURSES:
         try:
             driver.get(
-                'https://elearning.nbcc.ca/d2l/lms/dropbox/user/folders_list.d2l?ou=' + i[0] + '&isprv=0')
+                'https://elearning.nbcc.ca/d2l/lms/dropbox/user/folders_list.d2l?ou=' + i + '&isprv=0')
             assignments = wait.until(
                 EC.element_to_be_clickable((By.ID, "z_b"))).get_attribute("innerHTML")
             courseAssignments.extend(convertElementToArray(assignments, i))
         except:
-            configFile.sendError("Error with course: " + str(i[0]))
+            configFile.sendError("Error with course: " + str(i))
 finally:
     driver.quit()
 
@@ -118,13 +118,17 @@ for i in courseAssignments:
     if (courseAssignments[len(courseAssignments)-1] != i):
         jsonString += '{"courseCode": "' + \
             str(i[0]) + '", "assessmentName": "'+str(i[1]) + \
-            '", "unixTimestamp": "' + \
-            str(i[2]) + '", "courseName": "' + str(i[3]) + '"},'
+            '", "unixTimestamp": "' + str(i[2]) + '"},'
     else:
         jsonString += '{"courseCode": "' + \
             str(i[0]) + '", "assessmentName": "'+str(i[1]) + \
-            '", "unixTimestamp": "' + \
-            str(i[2]) + '", "courseName": "' + str(i[3]) + '"}'
+            '", "unixTimestamp": "' + str(i[2]) + '"}'
 jsonString += "]"
 
 print(jsonString)
+
+
+# configFile.postAssignments(
+#     "https://d2l.damianbernatchez.com/bulkAssignments", jsonString)
+
+configFile.postCourses()

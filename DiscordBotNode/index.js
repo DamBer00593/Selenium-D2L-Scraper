@@ -33,7 +33,14 @@ app.post('/bulkAssignments', (req, res) => {
     for (let i = 0; i < body.length; i++) {
         console.log(body[i])
     }
+})
 
+app.post('/bulkCourses', (req, res) => {
+    let body = req.body.assignments
+    console.log(body.length)
+    for (let i = 0; i < body.length; i++) {
+        console.log(body[i])
+    }
 })
 
 app.listen(port, () => {
