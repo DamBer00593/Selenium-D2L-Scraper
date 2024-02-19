@@ -1,4 +1,21 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js'
+
+import moment from 'moment'
+import fs from 'fs'
+let logStream = fs.createWriteStream('log.txt')
+let console = {}
+console.log = (obj) => {
+    var s = ''
+    if (typeof obj === 'string')
+        s = obj
+    else
+        s = JSON.stringify(obj)
+
+    var dS = '[' + moment().format() + '] '
+    s = `[${dS}] ${s}'\n'`
+    logStream.write(s)
+}
+
 export default class DiscordClass {
     constructor() {
         this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
