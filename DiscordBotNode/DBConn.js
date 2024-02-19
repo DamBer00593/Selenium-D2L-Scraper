@@ -16,7 +16,11 @@ export default class DBConn {
     static async openConn(con, sql) {
         return new Promise((resolve => {
             con.query(sql, function (err, result, fields) {
-                if (err) throw err;
+                try {
+                    if (err) throw err;
+                } catch (e) {
+                    console.log(e)
+                }
                 resolve(result)
             })
         }), 200);

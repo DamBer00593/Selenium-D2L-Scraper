@@ -18,7 +18,7 @@ app.all('*', (req, res, next) => {
 app.get('/a', async (req, res) => {
     try {
         let message = "hi lol"
-        discord.editMessageByID(message, configJSON.channelID, configJSON.messageID)
+        discord.sendMessage(configJSON.channelID, message)
         res.status(200).send("")
     }
     catch (e) {
@@ -27,20 +27,49 @@ app.get('/a', async (req, res) => {
     }
 })
 
-app.post('/bulkAssignments', (req, res) => {
-    let body = req.body.assignments
-    console.log(body.length)
-    for (let i = 0; i < body.length; i++) {
-        console.log(body[i])
-    }
+app.get('/courses', async (req, res) => {
+
+    let resp = await DataA.getCourses()
+    res.status(200).json(JSON.parse(resp))
+
 })
 
-app.post('/bulkCourses', (req, res) => {
+
+app.get('/assignments/due', async (req, res) => {
+
+    let resp = await DataA.getAssignmentsDue()
+    res.status(200).json(JSON.parse(resp))
+
+})
+
+app.get('/assignments', async (req, res) => {
+
+    let resp = await DataA.getAssignments()
+    res.status(200).json(JSON.parse(resp))
+
+})
+
+
+
+app.post('/bulkAssignments', async (req, res) => {
     let body = req.body.assignments
     console.log(body.length)
     for (let i = 0; i < body.length; i++) {
-        console.log(body[i])
+        await DataA.addAssignment(body[i].assessmentName, body[i].courseCode, body[i].unixTimestamp)
     }
+    res.status(200).send(`Successfully added`)
+})
+
+app.post('/bulkCourses', async (req, res) => {
+    let body = req.body.courses
+    console.log(body.length)
+    for (let i = 0; i < body.length; i++) {
+        console.log(body[i])
+        await DataA.addCourse(body[i].courseCode, body[i].courseName)
+
+    }
+    await editDiscordMessage()
+    res.status(200).send(`Successfully added`)
 })
 
 app.listen(port, () => {
@@ -48,3 +77,14 @@ app.listen(port, () => {
     // Log in to Discord with your client's token
     discord.startBot(configJSON.discordSecret)
 })
+
+
+async function editDiscordMessage() {
+    let assignments = JSON.parse(await DataA.getAssignmentsDue())
+    let str = ""
+    for (let i = 0; i < assignments.length; i++) {
+        // console.log(assignments[i])
+        str += `${assignments[i].nbccCourseCode}, ${assignments[i].assignmentName} due <t:${assignments[i].unixtime}:F> <t:${assignments[i].unixtime}:R>\n`
+    }
+    discord.editMessageByID(str, configJSON.channelID, configJSON.messageID)
+}
