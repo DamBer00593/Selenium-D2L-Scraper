@@ -1,3 +1,9 @@
 {
-	"discordSecret": "your-token-goes-here"
+    "discordSecret": "",
+    "messageID": "",
+    "channelID": "",
+    "databaseHOST": "",
+    "databaseName": "",
+    "databaseUser": "",
+    "databasePass": ""
 }

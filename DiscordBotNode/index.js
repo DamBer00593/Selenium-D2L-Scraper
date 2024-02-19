@@ -1,15 +1,36 @@
-const { Client, Events, GatewayIntentBits } = require('discord.js');
-const { discordSecret } = require('./config.json');
+import { readFileSync } from "fs";
+const configJSON = JSON.parse(readFileSync("./config.json"));
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+import DataA from "./DataAccessor.js"
+import DC from "./DiscordClass.js"
+import express from 'express'
+const app = express()
+const port = 3001
+let discord = new DC()
+app.all('*', (req, res, next) => {
+    next()
+})
 
-// When the client is ready, run this code (only once).
-// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
-// It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
 
-// Log in to Discord with your client's token
-client.login(discordSecret);
+app.get('/a', async (req, res) => {
+    try {
+        let message = "hi lol"
+        discord.editMessageByID(message, configJSON.channelID, configJSON.messageID)
+        res.status(200).send("")
+    }
+    catch (e) {
+        console.log(e)
+        res.send("ERROR")
+    }
+})
+
+app.post('/bulkAssignments', (req, res) => {
+    res.status(404)
+
+})
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+    // Log in to Discord with your client's token
+    discord.startBot(configJSON.discordSecret)
+})
