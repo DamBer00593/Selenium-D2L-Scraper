@@ -62,8 +62,8 @@ def convertElementToArray(element, courseCode):
                         "utf-8"), d2lTimeStampToUnix(stringystring), courseCode[1]])
                 else:
 
-                    assignmentsArray.append([courseCode, l[0].encode_contents().decode(
-                        "utf-8"), d2lTimeStampToUnix(l[1].encode_contents().decode("utf-8"))])
+                    assignmentsArray.append([courseCode[0], l[0].encode_contents().decode(
+                        "utf-8"), d2lTimeStampToUnix(l[1].encode_contents().decode("utf-8")), courseCode[3]])
         return assignmentsArray
     except:
         configFile.sendError("Error parsing soup on course: " + courseCode)
