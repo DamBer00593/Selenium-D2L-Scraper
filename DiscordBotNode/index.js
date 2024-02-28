@@ -4,27 +4,28 @@ const configJSON = JSON.parse(readFileSync("./config.json"));
 import DataA from "./DataAccessor.js"
 import DC from "./DiscordClass.js"
 import express, { json } from "express"
-import moment from 'moment'
-import fs from 'fs'
-let logStream = fs.createWriteStream('log.txt')
-let console = {}
-console.log = (obj) => {
-    var s = ''
-    if (typeof obj === 'string')
-        s = obj
-    else
-        s = JSON.stringify(obj)
+// import moment from 'moment'
+// import fs from 'fs'
+// let logStream = fs.createWriteStream('log.txt')
+// let console = {}
+// console.log = (obj) => {
+//     var s = ''
+//     if (typeof obj === 'string')
+//         s = obj
+//     else
+//         s = JSON.stringify(obj)
 
-    var dS = '[' + moment().format() + '] '
-    s = `[${dS}] ${s}'\n'`
-    logStream.write(s)
-}
+//     var dS = '[' + moment().format() + '] '
+//     s = `[${dS}] ${s}'\n'`
+//     logStream.write(s)
+// }
 const app = express()
 app.use(express.json());
 const port = 3001
 
 let discord = new DC()
 app.all('*', (req, res, next) => {
+    console.log("am i doing something?")
     next()
 })
 
@@ -81,6 +82,7 @@ app.post('/bulkAssignments', async (req, res) => {
         let body = req.body.assignments
         console.log(body.length)
         for (let i = 0; i < body.length; i++) {
+            console.log(body[i])
             await DataA.addAssignment(body[i].assessmentName, body[i].courseCode, body[i].unixTimestamp)
         }
         res.status(200).send(`Successfully added`)

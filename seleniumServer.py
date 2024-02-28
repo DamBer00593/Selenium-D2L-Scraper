@@ -128,7 +128,7 @@ jsonString += "]"
 print(jsonString)
 
 
-# configFile.postAssignments(
-#     "https://d2l.damianbernatchez.com/bulkAssignments", jsonString)
+configFile.postAssignments(
+    "http://localhost:3001/bulkAssignments", jsonString)
 
-configFile.postCourses()
+configFile.postCourses("http://localhost:3001/bulkCourses")

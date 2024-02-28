@@ -10,6 +10,14 @@ COURSES = [  # An array of courses to loop through the assignments page
     "209867",  # Alternative Solutions
     "209758"   # Linux Fundamentals
 ]
+# PUT THEM IN THE SAME ORDER
+COURSENAMES = [
+    "PROG1197",  # ISDP
+    "COMM1000",  # Technical Writing
+    "MNFT1057",  # Machatronics Fundamentals
+    "PROG1093",  # Alternative Solutions
+    "OSSE1207"   # Linux Fundamentals
+]
 
 # Error reporting method ("discord" ,"slack" ,"none")
 # slack was not tested <3
@@ -19,7 +27,7 @@ WEBHOOK = ""
 
 # if discord is selected, the users in the array will be pinged. add no users if you dont want people to be pinged
 DISCORDUSERID = [
-    
+    0000000000
 ]
 
 
@@ -42,3 +50,31 @@ def sendError(errorMessage):
         requests.post(WEBHOOK, json=new_data)
     elif (ERRORREPORTING.upper() == "none".upper()):
         print(errorMessage)
+
+
+def postAssignments(url, data):
+    new_data = {
+        "assignments": data
+    }
+    print(data)
+    requests.post(url, json=new_data)
+
+
+def postCourses(url):
+    jsonString = "["
+    for i in range(len(COURSES)):
+        if (COURSES[len(COURSES)-1] != COURSES[i]):
+            jsonString += '{"courseCode": "' + \
+                str(COURSES[i]) + '", "courseName": "' + \
+                str(COURSENAMES[i]) + '"},'
+        else:
+            jsonString += '{"courseCode": "' + \
+                str(COURSES[i]) + '", "courseName": "' + \
+                str(COURSENAMES[i]) + '"}'
+    jsonString += "]"
+
+    new_data = {
+        "courses": jsonString
+    }
+    print(jsonString)
+    requests.post(url, json=new_data)
